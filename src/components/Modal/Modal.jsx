@@ -24,11 +24,11 @@ class Modal extends Component {
   };
 
   render() {
-    const { img, alt } = this.props;
+    const { largeImg, alt } = this.props;
     return (
       <div className="overlay" onClick={this.onBackDropClick}>
         <div className="modal">
-          <img src={img} alt={alt} />
+          <img src={largeImg} alt={alt} />
         </div>
       </div>
     );
@@ -36,7 +36,7 @@ class Modal extends Component {
 }
 
 Modal.propTypes = {
-  img: PropTypes.string,
+  largeImg: PropTypes.string,
   alt: PropTypes.string,
   onClose: PropTypes.func,
 };

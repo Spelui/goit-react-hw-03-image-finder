@@ -5,6 +5,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import SearchBar from '../SearchBar/SearchBar';
 import ImageGallery from '../ImageGallery/ImageGallery';
 import getImg from '../../services/api';
+import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
+import Button from '../Button/Button';
+import Modal from '../Modal/Modal';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
 
@@ -21,6 +24,8 @@ class App extends Component {
     imgsArray: [],
     searchImg: '',
     loader: false,
+    largeImg: '',
+    altImage: '',
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -66,13 +71,25 @@ class App extends Component {
     this.setState({ searchImg, imgsArray: [], page: 1 });
   };
 
+  onCloseModal = () => {
+    this.setState({ largeImg: '', altImage: '' });
+  };
+
+  onClickImage = e => {
+    if (e.currentTarget === e.target) return;
+    const largeImg = e.target.dataset.large;
+    const altImage = e.target.alt;
+    this.setState({ largeImg, altImage });
+  };
+
   render() {
-    const { onSearchSubmit, fetchNextPageImg, state } = this;
+    const { onSearchSubmit, fetchNextPageImg, onClickImage } = this;
+    const { imgsArray, loader, largeImg, altImage } = this.state;
     return (
       <>
         <SearchBar onSubmit={onSearchSubmit} />
         <main>
-          {state.loader && (
+          {loader && (
             <Loader
               type="ThreeDots"
               color="#00BFFF"
@@ -82,9 +99,25 @@ class App extends Component {
               timeout={1000}
             />
           )}
-          <ImageGallery images={state} onClickBtn={fetchNextPageImg} />
+
+          <ImageGallery>
+            {imgsArray.map(img => (
+              <ImageGalleryItem image={img} onClick={onClickImage} />
+            ))}
+          </ImageGallery>
+
+          {imgsArray.length > 11 && <Button onClickBtn={fetchNextPageImg} />}
+
           <ToastContainer />
         </main>
+
+        {largeImg && (
+          <Modal
+            onClose={this.onCloseModal}
+            largeImg={largeImg}
+            alt={altImage}
+          />
+        )}
       </>
     );
   }
